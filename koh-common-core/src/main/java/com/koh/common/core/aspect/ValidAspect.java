@@ -40,7 +40,7 @@ public class ValidAspect {
     /**
      * 定义AOP签名 (切入所有使用鉴权注解的方法)
      */
-    public static final String POINTCUT_SIGN = " @annotation(com.cfc.common.core.valid.RequireValid)";
+    public static final String POINTCUT_SIGN = " @annotation(com.koh.common.core.valid.RequireValid)";
 
     /**
      * 声明AOP签名

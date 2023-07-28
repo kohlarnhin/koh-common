@@ -1,8 +1,9 @@
 package com.koh.common.core.entity;
 
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
+
 
 /**
  * @author kohlarnhin

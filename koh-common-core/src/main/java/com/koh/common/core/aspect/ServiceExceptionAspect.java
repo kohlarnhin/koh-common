@@ -30,7 +30,7 @@ public class ServiceExceptionAspect {
     /**
      * 定义AOP签名 (切入所有使用鉴权注解的方法)
      */
-    public static final String POINTCUT_SIGN = " @annotation(com.cfc.common.core.annotation.ServiceExceptionHandler)";
+    public static final String POINTCUT_SIGN = " @annotation(com.koh.common.core.annotation.ServiceExceptionHandler)";
 
     /**
      * 声明AOP签名
