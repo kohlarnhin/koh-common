@@ -31,7 +31,7 @@
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5</httpmime.version>
         <redisson.version>3.23.1</redisson.version>
-        <servlet.version>4.0.1</servlet.version>
+        <servlet.version>6.0.0</servlet.version>
 
         <github.global.server>github</github.global.server>
         <altDeploymentRepository>/Users/kohlarnhin/Software/maven/localRepository</altDeploymentRepository>
@@ -138,11 +138,13 @@
                 <artifactId>httpmime</artifactId>
                 <version>${httpmime.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet.version}</version>
             </dependency>
+
             <!--redisson-->
             <dependency>
                 <groupId>org.redisson</groupId>

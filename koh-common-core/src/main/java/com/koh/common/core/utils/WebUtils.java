@@ -2,9 +2,9 @@ package com.koh.common.core.utils;
 
 
 import com.alibaba.fastjson.JSON;
-import com.cfc.common.core.constant.BizCodeEnum;
+import com.koh.common.core.constant.BizCodeEnum;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class WebUtils
