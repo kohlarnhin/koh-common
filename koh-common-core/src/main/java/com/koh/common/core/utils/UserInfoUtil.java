@@ -1,9 +1,9 @@
 package com.koh.common.core.utils;
 
-import com.koh.common.core.entity.HeaderManager;
-import com.koh.common.core.entity.HeaderShop;
-import com.koh.common.core.entity.HeaderUser;
-import com.koh.common.core.filter.UserInfoFilter;
+import com.cfc.common.core.entity.HeaderManager;
+import com.cfc.common.core.entity.HeaderShop;
+import com.cfc.common.core.entity.HeaderUser;
+import com.cfc.common.core.filter.UserInfoFilter;
 import org.springframework.stereotype.Component;
 
 /**
