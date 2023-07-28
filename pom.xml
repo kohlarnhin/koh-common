@@ -10,24 +10,29 @@
     <packaging>pom</packaging>
 
     <properties>
+
+        <!--springboot-cloud-alibaba-->
+        <alibaba.cloud>2022.0.0.0</alibaba.cloud>
+        <spring.cloud.version>2022.0.0</spring.cloud.version>
+        <boot.version>3.0.2</boot.version>
+
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <fastjson.version>1.2.73</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <springfox.version>3.0.0</springfox.version>
         <xiaoymin.version>1.9.6</xiaoymin.version>
         <mysql.version>8.0.25</mysql.version>
-        <durid.version>1.2.10</durid.version>
-        <baomidou.verion>3.5.1</baomidou.verion>
-        <baomidou.generator>3.5.2</baomidou.generator>
-        <freemarker.version>2.3.28</freemarker.version>
-        <spring.cloud.version>2021.0.1</spring.cloud.version>
-        <alibaba.cloud>2021.0.1.0</alibaba.cloud>
-        <boot.version>2.6.3</boot.version>
+        <durid.version>1.2.18</durid.version>
+        <baomidou.verion>3.5.3.1</baomidou.verion>
+        <baomidou.generator>3.5.3.1</baomidou.generator>
+        <freemarker.version>2.3.32</freemarker.version>
         <koh.common.core.version>1.0.0</koh.common.core.version>
         <jwt.version>0.9.1</jwt.version>
-        <httpclient.version>4.5</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5</httpmime.version>
-        <redisson.version>3.16.6</redisson.version>
+        <redisson.version>3.23.1</redisson.version>
+        <servlet.version>4.0.1</servlet.version>
+
         <github.global.server>github</github.global.server>
         <altDeploymentRepository>/Users/kohlarnhin/Software/maven/localRepository</altDeploymentRepository>
     </properties>
@@ -60,6 +65,13 @@
                 <version>${boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!--自己的-->
+            <dependency>
+                <groupId>com.koh.common.core</groupId>
+                <artifactId>koh-common-core</artifactId>
+                <version>${koh.common.core.version}</version>
             </dependency>
 
             <!-- JSON 解析器和生成器 -->
@@ -111,11 +123,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.koh.common.core</groupId>
-                <artifactId>koh-common-core</artifactId>
-                <version>${koh.common.core.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jwt.version}</version>
@@ -132,6 +139,12 @@
                 <version>${httpmime.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
+            </dependency>
+            <!--redisson-->
+            <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
                 <version>${redisson.version}</version>
@@ -147,16 +160,17 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.1</version>
                 <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${altDeploymentRepository}</altDeploymentRepository>
+                    <altDeploymentRepository>internal.repo::default::file://${altDeploymentRepository}
+                    </altDeploymentRepository>
                 </configuration>
             </plugin>
             <!--2.作用：将本地存储库位置的jar文件发布到github上-->
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version >0.12</version>
+                <version>0.12</version>
                 <configuration>
-                    <message >Maven artifacts for ${project.version}</message>
+                    <message>Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
                     <!--本地jar相关文件地址，与上方配置储存库位置(altDeploymentRepository)保持一致-->
                     <outputDirectory>${altDeploymentRepository}</outputDirectory>
