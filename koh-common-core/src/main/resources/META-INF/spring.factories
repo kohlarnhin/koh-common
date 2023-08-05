@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.koh.common.core.filter.UserInfoFilter,\
+  com.koh.common.core.utils.UserInfoUtil,\
+  com.koh.common.core.exception.GlobalExceptionHandler,\
+  com.koh.common.core.aspect.ServiceExceptionAspect,\
+  com.koh.common.core.config.JsonHttpMessageConvert,\
+  com.koh.common.core.utils.KeyHelper

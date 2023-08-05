@@ -1,0 +1,2 @@
+com.koh.common.redis.config.RedisConfig
+com.koh.common.redis.auto.RepeatSubmitAutoConfiguration
