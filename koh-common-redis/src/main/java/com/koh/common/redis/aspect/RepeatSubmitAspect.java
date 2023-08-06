@@ -1,5 +1,6 @@
 package com.koh.common.redis.aspect;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.koh.common.core.utils.StringUtils;
 import com.koh.common.redis.annotation.RepeatSubmit;
 import com.koh.common.redis.config.RepeatSubmitConfig;
@@ -13,6 +14,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,6 +32,8 @@ import java.util.Objects;
 @Aspect
 @Component
 public class RepeatSubmitAspect {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -93,7 +97,13 @@ public class RepeatSubmitAspect {
         // 生成 Redis key
         String requestId = userIdProvider.getRequestId(request);
         String requestUrl = request.getRequestURI();
-        String requestBody = getRequestPostBody(request);
+        Object requestBody = null;
+        // 如果是 POST 或 PUT 请求，则获取请求体
+        if (HttpMethod.POST.name().equals(request.getMethod())
+                || HttpMethod.PUT.name().equals(request.getMethod())
+        ) {
+            requestBody = getRequestBody(request, joinPoint.getArgs());
+        }
         String data = requestId + ":" + requestUrl + requestBody;
         String key = serviceName + ":" + DigestUtils.md5Hex(data);
         //校验数据
@@ -101,7 +111,7 @@ public class RepeatSubmitAspect {
         // 判断 Redis key 是否存在
         String value = redisTemplate.opsForValue().get(key);
         if (value != null) {
-            throw new RepeatSubmitException(String.format("请勿重复提交请求,请求服务:%s,请求唯一标识:%s,请求地址:%s", serviceName, requestId, requestUrl), serviceName, key, requestUrl);
+            throw new RepeatSubmitException(String.format("请勿重复提交请求,请求服务:%s,请求唯一标识:%s,请求地址:%s", serviceName, requestId, requestUrl), serviceName, key, requestUrl, String.valueOf(requestBody));
         }
 
         // 将 Redis key 存入 Redis 中，并设置过期时间和单位
@@ -111,20 +121,52 @@ public class RepeatSubmitAspect {
         return joinPoint.proceed();
     }
 
+    /**
+     * 校验必要参数
+     *
+     * @param requestId  请求唯一标识
+     * @param serviceName 服务名称
+     */
     private void checkNeedParam(String requestId, String serviceName) {
         if (StringUtils.isBlank(requestId)) {
-            throw new RepeatSubmitException(String.format("请实现RequestIdProvider 接口，并返回唯一请求标识"), serviceName, null, null);
+            throw new RepeatSubmitException(String.format("请实现RequestIdProvider 接口，并返回唯一请求标识"), serviceName, null, null, null);
         }
     }
 
     /**
-     * 获取请求的 POST 请求体
+     * 获取请求体
      *
-     * @param request HTTP 请求
-     * @return 请求体字符串
+     * @param request 请求
+     * @param args    参数
+     * @return 请求体
      * @throws IOException 抛出异常
      */
-    private String getRequestPostBody(HttpServletRequest request) throws IOException {
+    private Object getRequestBody(HttpServletRequest request, Object[] args) throws IOException {
+        for (Object arg : args) {
+            if (arg instanceof HttpServletRequest) {
+                continue;
+            }
+            try {
+                // 尝试将参数转换为 Java 对象
+                return objectMapper.readValue(objectMapper.writeValueAsString(arg), Object.class);
+            } catch (Exception e) {
+                // 如果转换失败，则继续尝试下一个参数
+                continue;
+            }
+        }
+        // 如果所有参数都不是 Java 对象，则读取请求体的内容并解析为 Java 对象
+        String requestBody = getRequestBodyAsString(request);
+        return objectMapper.readValue(requestBody, Object.class);
+    }
+
+    /**
+     * 获取请求体
+     *
+     * @param request 请求
+     * @return 请求体
+     * @throws IOException 抛出异常
+     */
+    private String getRequestBodyAsString(HttpServletRequest request) throws IOException {
         BufferedReader reader = request.getReader();
         StringBuilder sb = new StringBuilder();
         String line;

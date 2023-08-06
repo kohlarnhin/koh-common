@@ -39,6 +39,11 @@ public class RepeatSubmitException extends RuntimeException {
     private final String requestService;
 
     /**
+     * 请求内容
+     */
+    private final String requestBody;
+
+    /**
      * 构造一个新的RepeatSubmitException，其中包含指定的详细消息、请求ID、请求URL和请求服务。
      *
      * @param message 错误消息。
@@ -46,12 +51,13 @@ public class RepeatSubmitException extends RuntimeException {
      * @param requestUrl 导致异常的请求的URL。
      * @param requestService 请求被发送到的服务。
      */
-    public RepeatSubmitException(String message, String requestId, String requestUrl, String requestService) {
+    public RepeatSubmitException(String message, String requestId, String requestUrl, String requestService, String requestBody) {
         super(message);
         this.message = message;
         this.requestId = requestId;
         this.requestUrl = requestUrl;
         this.requestService = requestService;
+        this.requestBody = requestBody;
     }
 
 }
