@@ -22,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 防止重复提交切面
@@ -33,7 +34,7 @@ import java.util.Objects;
 @Component
 public class RepeatSubmitAspect {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -89,10 +90,10 @@ public class RepeatSubmitAspect {
 
         // 获取服务名称
         String serviceName = repeatSubmitConfig.getServiceName();
-        if (StringUtils.isBlank(serviceName)) {
-            // 如果未配置服务名称，则获取当前服务的名称
-            serviceName = env.getProperty("spring.application.name");
-        }
+        // 如果未配置服务名称，则获取当前服务的名称
+        serviceName = Optional.ofNullable(serviceName)
+                .filter(StringUtils::isNotBlank)
+                .orElseGet(() -> env.getProperty("spring.application.name"));
 
         // 生成 Redis key
         String requestId = userIdProvider.getRequestId(request);
@@ -129,7 +130,7 @@ public class RepeatSubmitAspect {
      */
     private void checkNeedParam(String requestId, String serviceName) {
         if (StringUtils.isBlank(requestId)) {
-            throw new RepeatSubmitException(String.format("请实现RequestIdProvider 接口，并返回唯一请求标识"), serviceName, null, null, null);
+            throw new RepeatSubmitException(String.format("请求服务:%s,请实现RequestIdProvider 接口，并返回唯一请求标识",serviceName), serviceName, null, null, null);
         }
     }
 
@@ -151,7 +152,6 @@ public class RepeatSubmitAspect {
                 return objectMapper.readValue(objectMapper.writeValueAsString(arg), Object.class);
             } catch (Exception e) {
                 // 如果转换失败，则继续尝试下一个参数
-                continue;
             }
         }
         // 如果所有参数都不是 Java 对象，则读取请求体的内容并解析为 Java 对象
